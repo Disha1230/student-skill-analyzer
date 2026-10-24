@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Register{% endblock %}
+{% block content %}<div class="auth-card card p-4 shadow-sm mx-auto">
+<h2>Create account 🚀</h2><form method="post">
+<label class="form-label">Full Name</label><input class="form-control mb-3" name="name" required>
+<label class="form-label">Email</label><input class="form-control mb-3" name="email" type="email" required>
+<label class="form-label">Education Stream</label><select class="form-select mb-3" name="education_stream" required><option value="">Select stream</option><option>Commerce</option><option>Computer Science / IT</option><option>Arts / Humanities</option><option>Science</option><option>Medical / Healthcare</option><option>Education</option><option>Design / Media</option><option>Hospitality / Travel</option></select>
+<label class="form-label">Password</label><input class="form-control mb-3" name="password" type="password" required>
+<label class="form-label">Confirm Password</label><input class="form-control mb-3" name="confirm" type="password" required>
+<button class="btn btn-primary w-100">Create Account</button></form></div>{% endblock %}

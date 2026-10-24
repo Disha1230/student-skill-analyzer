@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}My Skills | SkillGap AI{% endblock %}
+{% block content %}
+<div class="page-hero compact"><div><div class="eyebrow">PERSONAL SKILL PROFILE</div><h1>🧠 My Skills</h1><p>{% if stream %}Your profile is set to <strong>{{ stream }}</strong>. Showing skills relevant to your stream.{% else %}Select your education stream to see relevant skills.{% endif %}</p></div></div>
+<div class="dash-panel mb-4"><div class="panel-title"><div><h3>🎓 Education Stream</h3><p>This controls the skills, quizzes and career recommendations shown to you.</p></div></div>
+<div class="d-flex align-items-center justify-content-between gap-3"><div><strong>{{ stream or 'Stream not selected' }}</strong><div class="small text-muted">Change your stream anytime from Profile.</div></div><a class="btn btn-outline-primary" href="{{ url_for('profile') }}">Edit Stream</a></div></div>
+<form method="post">
+<div class="row g-3">
+{% set ns = namespace(categories=[]) %}
+{% for s in all_skills %}{% if s['category'] not in ns.categories and (not stream or s['category'] in stream_domains.get(stream, [])) %}{% set ns.categories = ns.categories + [s['category']] %}{% endif %}{% endfor %}
+{% for cat in ns.categories %}<div class="col-md-6"><div class="card p-3 h-100"><h5>{{cat}}</h5>{% for s in all_skills if s['category']==cat %}
+<div class="form-check"><input class="form-check-input" type="checkbox" name="skills" value="{{s['skill_name']}}" id="s{{s['id']}}" {% if s['skill_name'] in mine %}checked{% endif %}><label class="form-check-label" for="s{{s['id']}}">{{s['skill_name']}}</label></div>
+{% endfor %}</div></div>{% endfor %}
+</div><button class="btn btn-primary mt-4" type="submit">Save My Skills</button></form>
+{% endblock %}

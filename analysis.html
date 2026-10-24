@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Analysis Result<div class="mt-4"><a class="btn btn-primary" href="{{ url_for('download_report', analysis_id=a['id']) }}">📄 Download Skill Gap Report</a></div>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center"><div><h2>📊 Skill Gap Result</h2><p class="text-muted">{{a['role_name']}}</p></div><a href="{{url_for('roadmap',analysis_id=a['id'])}}" class="btn btn-primary">View Roadmap</a></div>
+<div class="row g-3 my-3"><div class="col-md-4"><div class="stat card p-4 text-center"><small>Skill Match</small><h1>{{a['match_percent']}}%</h1></div></div><div class="col-md-4"><div class="stat card p-4 text-center"><small>Matched Skills</small><h1>{{a['matched_count']}}</h1></div></div><div class="col-md-4"><div class="stat card p-4 text-center"><small>Missing Skills</small><h1>{{a['missing_count']}}</h1></div></div></div>
+<div class="card p-4"><h4>Skill Breakdown</h4><div class="mb-3"><label>Matched</label><div class="progress"><div class="progress-bar" style="width:{{a['match_percent']}}%">{{a['match_percent']}}%</div></div></div>
+<h5>Known Skills</h5>{% for s in matched %}<span class="badge bg-success me-1 mb-1">✓ {{s['skill_name']}}</span>{% endfor %}
+<hr><h5>Missing Skills</h5>{% for s in missing %}<span class="badge bg-danger me-1 mb-1">✗ {{s['skill_name']}}</span>{% endfor %}
+</div>
+<div class="card p-4 mt-4"><h4>🤖 AI Learning Suggestion</h4><p>You have matched {{a['matched_count']}} of the {{a['matched_count']+a['missing_count']}} required skills for this role. Focus on the missing skills below in the suggested learning order.</p>
+<ol>{% for s in roadmap %}<li class="mb-2"><b>{{s}}</b></li>{% endfor %}</ol></div>
+<div class="mt-4"><a class="btn btn-primary" href="{{ url_for('download_report', analysis_id=a['id']) }}">📄 Download Skill Gap Report</a></div>
+{% endblock %}

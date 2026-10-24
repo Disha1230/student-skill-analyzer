@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Resume Analysis{% endblock %}
+{% block content %}<div class="card p-5 upload-box">
+<h2>📄 Upload Resume</h2><p class="text-muted">Use a text-based PDF containing your technical skills.</p>
+<form method="post" enctype="multipart/form-data">
+<input class="form-control form-control-lg mb-3" type="file" name="resume" accept=".pdf" required>
+<button class="btn btn-primary btn-lg">Analyze Resume with AI</button>
+</form>
+<div class="alert alert-info mt-4 mb-0"><b>Supported demo skills:</b> HTML, CSS, JavaScript, React, Python, Java, Flask, SQL, MySQL, Git, GitHub, Pandas, NumPy, Excel, Power BI and more.</div>
+</div>{% endblock %}

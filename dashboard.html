@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | SkillGap AI{% endblock %}
+{% block content %}
+<div class="dashboard-head">
+  <div>
+    <div class="eyebrow">STUDENT SKILL GAP ANALYZER</div>
+    <h1>Hi, {{ current_user['name'] }} <span>👋</span></h1>
+    <p>Track your skills, identify gaps and build your career roadmap.{% if student_stream %} · <strong>{{ student_stream }}</strong>{% endif %}</p>
+  </div>
+  <a class="btn btn-primary dashboard-cta" href="{{ url_for('resume') }}">📄 Analyze Resume</a>
+</div>
+
+<div class="dashboard-stats">
+  <div class="dash-stat">
+    <div class="stat-icon">🧠</div><div><small>MY SKILLS</small><strong>{{ skills|length }}</strong><span>Skills detected</span></div>
+  </div>
+  <div class="dash-stat">
+    <div class="stat-icon">🎯</div><div><small>LATEST MATCH</small><strong>{% if latest %}{{ latest['match_percent']|round|int }}%{% else %}—{% endif %}</strong><span>{% if latest %}{{ latest['role_name'] }}{% else %}Run an analysis{% endif %}</span></div>
+  </div>
+  <div class="dash-stat">
+    <div class="stat-icon">📊</div><div><small>ANALYSES</small><strong>{{ analyses|length }}</strong><span>Recent analyses</span></div>
+  </div>
+  <div class="dash-stat">
+    <div class="stat-icon">📈</div><div><small>LEARNING PROGRESS</small><strong>{{ avg_progress }}%</strong><span>{{ completed_count }} completed</span></div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <section class="dash-panel overview-panel">
+    <div class="panel-title"><div><h3>Skill Gap Overview</h3><p>Your latest job-role analysis</p></div>{% if latest %}<span class="role-pill">{{ latest['role_name'] }}</span>{% endif %}</div>
+    {% if latest %}
+    <div class="overview-content">
+      <div class="match-ring" style="--match: {{ latest['match_percent'] }}%;"><div><strong>{{ latest['match_percent']|round|int }}%</strong><span>Skill Match</span></div></div>
+      <div class="overview-details">
+        <div class="mini-result matched"><span>✓</span><div><strong>{{ latest['matched_count'] }}</strong><small>Skills matched</small></div></div>
+        <div class="mini-result missing"><span>!</span><div><strong>{{ latest['missing_count'] }}</strong><small>Skills to learn</small></div></div>
+        <a class="btn btn-outline-primary" href="{{ url_for('analysis_result', analysis_id=latest['id']) }}">View Full Analysis →</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-dashboard"><div>🎯</div><h4>No analysis yet</h4><p>Choose a job role and compare it with your current skills.</p><a class="btn btn-primary" href="{{ url_for('job_roles') }}">Choose Job Role</a></div>
+    {% endif %}
+  </section>
+
+  <section class="dash-panel skills-panel">
+    <div class="panel-title"><div><h3>My Current Skills</h3><p>Skills found in your profile</p></div><a href="{{ url_for('skills_page') }}">Manage</a></div>
+    {% if skills %}<div class="skill-cloud">{% for s in skills %}<span class="skill-chip">{{ s['skill_name'] }}</span>{% endfor %}</div>{% else %}<div class="empty-small">No skills yet. Upload a resume to detect skills.</div>{% endif %}
+  </section>
+</div>
+
+<section class="dash-panel mb-4">
+  <div class="panel-title"><div><h3>🚀 Career Readiness</h3><p>A transparent planning metric based on your latest role match and learning progress.</p></div><a href="{{ url_for('career_readiness') }}">View details →</a></div>
+  <div class="readiness-strip"><div><strong>{% if latest %}{{ ((latest['match_percent'] * 0.65) + (avg_progress * 0.35))|round|int }}%{% else %}{{ avg_progress }}%{% endif %}</strong><span>Readiness estimate</span></div><div class="readiness-bar"><div class="progress"><div class="progress-bar" style="width:{% if latest %}{{ ((latest['match_percent'] * 0.65) + (avg_progress * 0.35))|round|int }}{% else %}{{avg_progress}}{% endif %}%"></div></div><small>{% if latest %}Target: {{latest['role_name']}}{% else %}Analyze a role to personalize this metric{% endif %}</small></div><a class="btn btn-primary" href="{{ url_for('job_description') }}">💼 Check Job Description</a></div>
+</section>
+
+<div class="dashboard-grid lower-grid">
+  <section class="dash-panel roadmap-preview">
+    <div class="panel-title"><div><h3>Build Your Roadmap</h3><p>Turn missing skills into your next learning steps.</p></div><span class="panel-icon">🗺️</span></div>
+    <div class="feature-row"><div class="feature-number">01</div><div><strong>Analyze your skill gap</strong><span>Compare your skills with a target role.</span></div></div>
+    <div class="feature-row"><div class="feature-number">02</div><div><strong>Learn missing skills</strong><span>Follow the recommended learning sequence.</span></div></div>
+    <div class="feature-row"><div class="feature-number">03</div><div><strong>Track your progress</strong><span>Update completion as you learn.</span></div></div>
+    <a class="roadmap-link" href="{{ url_for('job_roles') }}">Explore Job Roles →</a>
+  </section>
+
+  <section class="dash-panel recent-panel">
+    <div class="panel-title"><div><h3>Recent Analyses</h3><p>Your latest skill-gap checks</p></div></div>
+    {% if analyses %}
+    <div class="analysis-list">{% for a in analyses %}<a class="analysis-row" href="{{ url_for('analysis_result', analysis_id=a['id']) }}"><div class="analysis-role"><span class="analysis-dot"></span><div><strong>{{ a['role_name'] }}</strong><small>{{ a['created_at'][:10] }}</small></div></div><div class="analysis-match">{{ a['match_percent']|round|int }}%</div><span class="arrow">→</span></a>{% endfor %}</div>
+    {% else %}<div class="empty-small">No analysis yet.</div>{% endif %}
+  </section>
+</div>
+
+<section class="dash-panel top-matches-panel">
+  <div class="panel-title">
+    <div>
+      <h3>🏆 Top 10 Best Matches</h3>
+      <p>{% if student_stream %}{{ student_stream }} roles matched to your current skills.{% else %}Job roles that match your current skills most closely.{% endif %}</p>
+    </div>
+    <a href="{{ url_for('recommendations') }}">View All →</a>
+  </div>
+
+  {% if top_matches %}
+  <div class="top-matches-list">
+    {% for r in top_matches %}
+    <a class="top-match-row" href="{{ url_for('analyze', role_id=r['role_id']) }}">
+      <div class="match-rank{% if loop.index == 1 %} gold{% elif loop.index == 2 %} silver{% elif loop.index == 3 %} bronze{% endif %}">{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}</div>
+      <div class="top-match-info">
+        <strong>{{ r['role_name'] }}</strong>
+        <small>{{ r['matched'] }} of {{ r['total'] }} required skills matched</small>
+      </div>
+      <div class="top-match-progress">
+        <div class="progress">
+          <div class="progress-bar" style="width:{{ r['match_percent'] }}%"></div>
+        </div>
+      </div>
+      <div class="top-match-percent">{{ r['match_percent']|round|int }}%</div>
+      <span class="arrow">→</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-small">Add or detect skills to see your top job-role matches.</div>
+  {% endif %}
+</section>
+
+<div class="quick-actions">
+  <a href="{{ url_for('resume') }}"><span>📄</span><div><strong>Resume Analysis</strong><small>Upload your PDF resume</small></div>→</a>
+  <a href="{{ url_for('job_roles') }}"><span>🎯</span><div><strong>Job Roles</strong><small>Find a target career role</small></div>→</a>
+  <a href="{{ url_for('progress') }}"><span>📈</span><div><strong>My Progress</strong><small>Track your learning</small></div>→</a>
+  <a href="{{ url_for('job_description') }}"><span>💼</span><div><strong>Job Match</strong><small>Paste a real job description</small></div>→</a>
+</div>
+{% endblock %}

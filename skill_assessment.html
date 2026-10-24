@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block title %}Skill Assessment | SkillGap AI{% endblock %}
+{% block content %}
+<div class="page-hero compact"><div><div class="eyebrow">SKILL ASSESSMENT</div><h1>🧪 Test Your Skills</h1><p>{% if student_stream %}Showing assessments relevant to <strong>{{student_stream}}</strong>.{% else %}Choose a skill to assess your knowledge.{% endif %}</p></div></div>
+{% if target_role %}<div class="rank-banner mb-3"><div><strong>Current target: {{target_role}}</strong><span>Your quiz results can update tracked progress for the selected skill.</span></div></div>{% endif %}
+<div class="filter-bar"><select class="form-select" onchange="location='{{url_for('skill_assessment')}}?skill='+encodeURIComponent(this.value)">{% for x in skills %}<option {% if x==skill %}selected{% endif %}>{{x}}</option>{% endfor %}</select></div>
+{% if result %}<div class="rank-banner mb-4"><div><strong>Score: {{result.score}} / {{result.total}} · {{result.percentage}}%</strong><span>Your saved progress will not decrease if you already had a higher value.</span></div><a class="btn btn-light" href="{{url_for('progress')}}">View Progress →</a></div>{% endif %}
+<form method="post" class="quiz-list"><input type="hidden" name="skill" value="{{skill}}">{% for q in questions %}{% set qi=loop.index0 %}<div class="dash-panel quiz-card"><h4>{{loop.index}}. {{q[0]}}</h4>{% for option in q[1] %}<label class="quiz-option"><input type="radio" name="q{{qi}}" value="{{loop.index0}}" required> <span>{{option}}</span></label>{% endfor %}</div>{% endfor %}<button class="btn btn-primary btn-lg">Submit {{skill}} Assessment</button></form>
+{% endblock %}

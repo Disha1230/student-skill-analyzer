@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Job Roles | SkillGap AI{% endblock %}
+{% block content %}
+<div class="page-hero compact"><div><div class="eyebrow">CAREER EXPLORER</div><h1>🎯 Explore Job Roles</h1><p>Find a target role and instantly see how your current skills compare.</p></div></div>
+<div class="filter-bar"><input id="roleSearch" class="form-control" placeholder="Search job roles…"><select id="domainFilter" class="form-select"><option value="">All domains</option><option>Technology</option><option>Commerce</option><option>Arts</option><option>Medical / Healthcare</option><option>Science</option><option>Education</option><option>Design & Media</option><option>Hospitality & Travel</option></select></div>
+<div class="row g-4" id="roleGrid">{% for r in roles %}<div class="col-md-6 col-lg-4 role-item" data-role="{{r['role_name']|lower}}" data-domain="{{r['domain']}}"><div class="recommend-card role-card-modern"><span class="category-label">{{r['domain']}}</span><h3>{{r['role_name']}}</h3><p>{{r['description']}}</p><a class="btn btn-primary mt-auto" href="{{url_for('analyze',role_id=r['id'])}}">Analyze My Gap →</a></div></div>{% endfor %}</div>
+<script>const rs=document.getElementById('roleSearch'),df=document.getElementById('domainFilter'); function filterRoles(){const q=rs.value.toLowerCase(),d=df.value;document.querySelectorAll('.role-item').forEach(x=>x.style.display=(!q||x.dataset.role.includes(q))&&(!d||x.dataset.domain===d)?'block':'none')}rs.oninput=filterRoles;df.onchange=filterRoles;</script>
+{% endblock %}

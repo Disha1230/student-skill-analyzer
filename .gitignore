@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+student_skill_analyzer.db
+uploads/resumes/*

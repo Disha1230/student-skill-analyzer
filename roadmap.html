@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block title %}Learning Roadmap{% endblock %}
+{% block content %}<h2>📚 Your Learning Roadmap</h2><p class="text-muted">Suggested order based on common learning dependencies.</p>
+<div class="timeline">{% for s in roadmap %}<div class="road-step"><span>{{loop.index}}</span><div><h5>{{s}}</h5><p class="text-muted mb-0">Build this skill before moving to the next missing skill.</p></div></div>{% else %}<div class="alert alert-success">🎉 No missing skills for this analysis!</div>{% endfor %}</div>{% endblock %}
