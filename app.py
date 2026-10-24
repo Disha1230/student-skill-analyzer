@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_file
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from ai.skill_extractor import extract_skills_from_text, extract_text_from_pdf
-from ai.skill_matcher import calculate_gap
-from ai.recommender import build_roadmap, role_recommendations
+from skill_extractor import extract_skills_from_text, extract_text_from_pdf
+from skill_matcher import calculate_gap
+from recommender import build_roadmap, role_recommendations
 import sqlite3, os, json
 from datetime import datetime
 import re
